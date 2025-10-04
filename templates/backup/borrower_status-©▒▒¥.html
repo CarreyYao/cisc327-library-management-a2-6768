@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>👤 Borrower Status</h2>
+<p>Check the status of a library patron.</p>
+
+<!-- 修复action路径 -->
+<form method="POST" action="{{ url_for('borrower_status.status') }}">
+    <div class="form-group">
+        <label for="patron_id">Patron ID</label>
+        <input type="text" id="patron_id" name="patron_id" 
+               pattern="[0-9]{6}" maxlength="6" 
+               placeholder="Enter 6-digit patron ID" 
+               value="{{ patron_id if patron_id else '' }}" required>
+        <small style="color: #666;">Enter the 6-digit patron ID</small>
+    </div>
+    
+    <div class="form-group">
+        <button type="submit" name="action" value="query" class="btn">Query</button>
+        <a href="{{ url_for('catalog.catalog') }}" class="btn btn-secondary" style="margin-left: 10px;">Cancel</a>
+    </div>
+</form>
+
+{% if status_report %}
+    <hr style="margin: 30px 0;">
+    
+    <h3>Borrower Status Report for Patron ID: {{ patron_id }}</h3>
+    
+    <div class="status-info">
+        <table class="status-table">
+            <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Patron ID</strong></td>
+                    <td>{{ status_report.patron_id if status_report.patron_id else 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Books Borrowed</strong></td>
+                    <td>{{ status_report.total_books_borrowed if status_report.total_books_borrowed else 0 }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Currently Borrowed Books</strong></td>
+                    <td>{{ status_report.currently_borrowed | length if status_report.currently_borrowed else 0 }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Late Fees Owed</strong></td>
+                    <td>${{ "%.2f"|format(status_report.total_late_fees_owed) if status_report.total_late_fees_owed else 0.00 }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Status</strong></td>
+                    <td>{{ status_report.status if status_report.status else 'N/A' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% if status_report.currently_borrowed %}
+    <h4 style="margin-top: 20px;">Currently Borrowed Books</h4>
+    <table class="status-table">
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Due Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in status_report.currently_borrowed %}
+            <tr>
+                <td>{{ book.book_id if book.book_id else 'N/A' }}</td>
+                <td>{{ book.title if book.title else 'N/A' }}</td>
+                <td>{{ book.author if book.author else 'N/A' }}</td>
+                <td>{{ book.due_date.strftime('%Y-%m-%d') if book.due_date else 'N/A' }}</td>
+                <td>
+                    {% if book.overdue %}
+                        <span class="status-unavailable">Overdue</span>
+                    {% else %}
+                        <span class="status-available">On time</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if status_report.borrow_history %}
+    <h4 style="margin-top: 20px;">Borrow History</h4>
+    <table class="status-table">
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Borrow Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for history in status_report.borrow_history %}
+            <tr>
+                <td>{{ history.book_id if history.book_id else 'N/A' }}</td>
+                <td>{{ history.title if history.title else 'N/A' }}</td>
+                <td>{{ history.author if history.author else 'N/A' }}</td>
+                <td>{{ history.borrow_date.strftime('%Y-%m-%d') if history.borrow_date else 'N/A' }}</td>
+                <td>{{ history.due_date.strftime('%Y-%m-%d') if history.due_date else 'N/A' }}</td>
+                <td>{{ history.return_date.strftime('%Y-%m-%d') if history.return_date else 'Not Returned' }}</td>
+                <td>
+                    {% if history.was_overdue %}
+                        <span class="status-unavailable">Overdue</span>
+                    {% elif history.return_date %}
+                        <span class="status-available">Returned</span>
+                    {% else %}
+                        <span>Not Returned</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+{% elif error_message %}
+    <hr style="margin: 30px 0;">
+    <div class="flash-error">
+        {{ error_message }}
+    </div>
+{% endif %}
+
+{% endblock %}
