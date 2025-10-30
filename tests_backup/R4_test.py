@@ -12,7 +12,7 @@ from database import  (
     get_db_connection
 )
 
-from services.library_service import (
+from library_service import (
     return_book_by_patron, borrow_book_by_patron
 )
 
@@ -30,10 +30,10 @@ def test_return_book_with_valid_data():
     }
     
     # Simulate all required functions
-    with patch('services.library_service.get_book_by_id', return_value=mock_book), \
-         patch('services.library_service.update_borrow_record_return_date', return_value=True), \
-         patch('services.library_service.update_book_availability', return_value=True), \
-         patch('services.library_service.calculate_late_fee_for_book') as mock_late_fee:
+    with patch('library_service.get_book_by_id', return_value=mock_book), \
+         patch('library_service.update_borrow_record_return_date', return_value=True), \
+         patch('library_service.update_book_availability', return_value=True), \
+         patch('library_service.calculate_late_fee_for_book') as mock_late_fee:
         
         # Simulate no late fee
         mock_late_fee.return_value = {
@@ -83,18 +83,18 @@ def test_return_book_with_different_borrower():
     mock_get_book.side_effect = [mock_book, mock_book]
     
     # Simulated borrowing success
-    with patch('services.library_service.get_book_by_id', mock_get_book), \
-         patch('services.library_service.get_patron_borrow_count', return_value=2), \
-         patch('services.library_service.insert_borrow_record', return_value=True), \
-         patch('services.library_service.update_book_availability', return_value=True):
+    with patch('library_service.get_book_by_id', mock_get_book), \
+         patch('library_service.get_patron_borrow_count', return_value=2), \
+         patch('library_service.insert_borrow_record', return_value=True), \
+         patch('library_service.update_book_availability', return_value=True):
         
         # patron id 111111 borrow book
         borrow_success, borrow_message = borrow_book_by_patron("111111", 2)
         assert borrow_success == True
     
     # Simulated book return failure (different borrowers)
-    with patch('services.library_service.get_book_by_id', return_value=mock_book), \
-         patch('services.library_service.update_borrow_record_return_date', return_value=False):
+    with patch('library_service.get_book_by_id', return_value=mock_book), \
+         patch('library_service.update_borrow_record_return_date', return_value=False):
         
         return_success, return_message = return_book_by_patron("123456", 2)
         

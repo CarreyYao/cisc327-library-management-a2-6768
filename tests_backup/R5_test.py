@@ -9,14 +9,14 @@ from datetime import datetime, timedelta
 # Add the parent directory to the path to import the module
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from services.library_service import (
+from library_service import (
     return_book_by_patron, borrow_book_by_patron, calculate_late_fee_for_book
 )
 
 def test_calculate_late_fee_no_borrow_record():
     """When there is no borrowing record in the test, 0 fee and the correct status shall be returned."""
     # It is intended that get_patron_borrowed_books returns an empty list (no borrowing records).
-    with patch('services.library_service.get_patron_borrowed_books') as mock_get_books:
+    with patch('library_service.get_patron_borrowed_books') as mock_get_books:
         mock_get_books.return_value = []  
         
         result = calculate_late_fee_for_book("999999", 4)
@@ -27,7 +27,7 @@ def test_calculate_late_fee_no_borrow_record():
 
 def test_calculate_late_fee_on_time_return():
     """Testing the calculation of late fees for returning books on time"""
-    with patch('services.library_service.get_patron_borrowed_books') as mock_get_books:
+    with patch('library_service.get_patron_borrowed_books') as mock_get_books:
         # Simulating non-overdue borrowing records
         mock_get_books.return_value = [
             {
@@ -47,7 +47,7 @@ def test_calculate_late_fee_on_time_return():
 
 def test_calculate_late_fee_three_days_overdue():
     """Testing the calculation of late payment fees for a 3-day overdue period"""
-    with patch('services.library_service.get_patron_borrowed_books') as mock_get_books:
+    with patch('library_service.get_patron_borrowed_books') as mock_get_books:
         mock_get_books.return_value = [
             {
                 'book_id': 2,
@@ -65,7 +65,7 @@ def test_calculate_late_fee_three_days_overdue():
 
 def test_calculate_maximum_late_fee():
     """Testing calculating the upper limit of late fees"""
-    with patch('services.library_service.get_patron_borrowed_books') as mock_get_books:
+    with patch('library_service.get_patron_borrowed_books') as mock_get_books:
         # Simulating borrowing records with a 30-day overdue period
         mock_get_books.return_value = [
             {
@@ -84,7 +84,7 @@ def test_calculate_maximum_late_fee():
 
 def test_calculate_late_fee_multiple_books():
     """Testing the accurate calculation of late payment fees for specific books when a patron borrows multiple books"""
-    with patch('services.library_service.get_patron_borrowed_books') as mock_get_books:
+    with patch('library_service.get_patron_borrowed_books') as mock_get_books:
         # The simulated reader borrowed 3 books, but only the 2nd book is overdued.
         mock_get_books.return_value = [
             {

@@ -12,7 +12,7 @@ from database import  (
     get_db_connection
 )
 
-from services.library_service import (
+from library_service import (
     borrow_book_by_patron
 )
 
@@ -32,11 +32,11 @@ def test_borrow_book_with_valid_data():
         'available_copies': 3
     }
     
-    with patch('services.library_service.get_book_by_id', return_value=mock_book), \
-         patch('services.library_service.get_patron_borrow_count', return_value=2), \
-         patch('services.library_service.insert_borrow_record', return_value=True), \
-         patch('services.library_service.update_book_availability', return_value=True), \
-         patch('services.library_service.datetime') as mock_datetime:
+    with patch('library_service.get_book_by_id', return_value=mock_book), \
+         patch('library_service.get_patron_borrow_count', return_value=2), \
+         patch('library_service.insert_borrow_record', return_value=True), \
+         patch('library_service.update_book_availability', return_value=True), \
+         patch('library_service.datetime') as mock_datetime:
         
         # Mock current time
         fixed_time = datetime(2023, 1, 1, 12, 0, 0)

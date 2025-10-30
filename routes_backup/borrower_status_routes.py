@@ -3,8 +3,7 @@ Borrower Status Routes
 """
 
 from flask import Blueprint, render_template, request
-#from library_service import get_patron_status_report
-from services.library_service import get_patron_status_report
+from library_service import get_patron_status_report
 from jinja2 import TemplateNotFound, TemplateSyntaxError  # 添加这行导入
 
 # 创建蓝图并设置模板文件夹路径

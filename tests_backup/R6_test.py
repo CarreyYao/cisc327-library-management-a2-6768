@@ -11,13 +11,13 @@ from database import  (
     get_db_connection
 )
 
-from services.library_service import (
+from library_service import (
     search_books_in_catalog
 )
 
 # Test case 1: Positive test case - Search by title with exact match
 def test_search_books_by_title_exact_match():
-    with patch('services.library_service.get_all_books') as mock_get_all:
+    with patch('library_service.get_all_books') as mock_get_all:
         mock_get_all.return_value = [
             {'id': 1, 'title': 'The Great Gatsby', 'author': 'F. Scott Fitzgerald', 'isbn': '9780743273565'},
             {'id': 2, 'title': 'To Kill a Mockingbird', 'author': 'Harper Lee', 'isbn': '9780061120084'}
@@ -28,7 +28,7 @@ def test_search_books_by_title_exact_match():
 
 # Test case 2: Positive test case - Search by author with partial match (case-insensitive)
 def test_search_books_by_author_partial_match():
-    with patch('services.library_service.get_all_books') as mock_get_all:
+    with patch('library_service.get_all_books') as mock_get_all:
         mock_get_all.return_value = [
             {'id': 1, 'title': 'The Great Gatsby', 'author': 'F. Scott Fitzgerald', 'isbn': '9780743273565'},
             {'id': 2, 'title': 'To Kill a Mockingbird', 'author': 'Harper Lee', 'isbn': '9780061120084'},
@@ -41,7 +41,7 @@ def test_search_books_by_author_partial_match():
 
 # Test case 3: Positive test case - Search by ISBN with exact match
 def test_search_books_by_isbn_exact_match():
-    with patch('services.library_service.get_all_books') as mock_get_all:
+    with patch('library_service.get_all_books') as mock_get_all:
         mock_get_all.return_value = [
             {'id': 1, 'title': 'The Great Gatsby', 'author': 'F. Scott Fitzgerald', 'isbn': '9780743273565'},
             {'id': 2, 'title': 'To Kill a Mockingbird', 'author': 'Harper Lee', 'isbn': '9780061120084'}
@@ -53,7 +53,7 @@ def test_search_books_by_isbn_exact_match():
 
 # Test case 4: Negative test case - Empty search term
 def test_search_books_empty_search_term():
-    with patch('services.library_service.get_all_books') as mock_get_all:
+    with patch('library_service.get_all_books') as mock_get_all:
         mock_get_all.return_value = [
             {'id': 1, 'title': 'The Great Gatsby', 'author': 'F. Scott Fitzgerald', 'isbn': '9780743273565'}
         ]
@@ -63,7 +63,7 @@ def test_search_books_empty_search_term():
 
 # Test case 5: Negative test case - Invalid search type
 def test_search_books_invalid_search_type():
-    with patch('services.library_service.get_all_books') as mock_get_all:
+    with patch('library_service.get_all_books') as mock_get_all:
         mock_get_all.return_value = [
             {'id': 1, 'title': 'The Great Gatsby', 'author': 'F. Scott Fitzgerald', 'isbn': '9780743273565'}
         ]

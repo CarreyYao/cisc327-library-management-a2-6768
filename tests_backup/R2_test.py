@@ -12,7 +12,7 @@ from database import (
     update_borrow_record_return_date, get_all_books, get_db_connection
 )
 
-from services.library_service import display_all_book_in_catalog
+from library_service import display_all_book_in_catalog
 
 # Test case 1: Positive test case - Display books with valid data
 def test_display_all_books_with_valid_data():
@@ -24,7 +24,7 @@ def test_display_all_books_with_valid_data():
     ]
     
     # Simulate get_all_books() to return mock data
-    with patch('services.library_service.get_all_books', return_value=mock_books):
+    with patch('library_service.get_all_books', return_value=mock_books):
         result = display_all_book_in_catalog()
         
         # Verify whether the function returns the expected data
@@ -75,7 +75,7 @@ def test_display_all_books_large_dataset():
         } for i in range(1000)
     ]
     
-    with patch('services.library_service.get_all_books', return_value=mock_books):
+    with patch('library_service.get_all_books', return_value=mock_books):
         result = display_all_book_in_catalog()
         
         # Verify the function handles large dataset
@@ -99,7 +99,7 @@ def test_display_all_books_required_fields():
         }
     ]
     
-    with patch('services.library_service.get_all_books', return_value=mock_data):
+    with patch('library_service.get_all_books', return_value=mock_data):
         result = display_all_book_in_catalog()
         
         # Verify all required fields are present in the result

@@ -8,7 +8,7 @@ import sqlite3
 # Add the parent directory to the path to import the module
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from services.library_service import get_patron_status_report, calculate_late_fee_for_book
+from library_service import get_patron_status_report, calculate_late_fee_for_book
 
 def test_get_patron_status_report_valid_patron():
     """Status Report on Testing Valid patron ID"""
@@ -35,10 +35,10 @@ def test_get_patron_status_report_valid_patron():
         }
     ]
 
-    with patch('services.library_service.get_patron_borrowed_books', return_value=mock_currently_borrowed), \
-         patch('services.library_service.get_db_connection') as mock_db_conn, \
-         patch('services.library_service.calculate_late_fee_for_book', return_value={'fee_amount': 0.0}), \
-         patch('services.library_service.get_patron_status_report') as mock_report:
+    with patch('library_service.get_patron_borrowed_books', return_value=mock_currently_borrowed), \
+         patch('library_service.get_db_connection') as mock_db_conn, \
+         patch('library_service.calculate_late_fee_for_book', return_value={'fee_amount': 0.0}), \
+         patch('library_service.get_patron_status_report') as mock_report:
         
         mock_report.return_value = {
             'patron_id': "123456",
@@ -74,8 +74,8 @@ def test_get_patron_status_report_invalid_patron_id():
 
 def test_get_patron_status_report_no_borrowed_books():
     """Testing Readers with No borrowing Records"""
-    with patch('services.library_service.get_patron_borrowed_books', return_value=[]), \
-         patch('services.library_service.get_db_connection') as mock_db_conn:
+    with patch('library_service.get_patron_borrowed_books', return_value=[]), \
+         patch('library_service.get_db_connection') as mock_db_conn:
         
         mock_conn = MagicMock()
         mock_cursor = MagicMock()
@@ -103,9 +103,9 @@ def test_get_patron_status_report_with_late_fees():
         }
     ]
     
-    with patch('services.library_service.get_patron_borrowed_books', return_value=mock_currently_borrowed), \
-         patch('services.library_service.get_db_connection') as mock_db_conn, \
-         patch('services.library_service.calculate_late_fee_for_book') as mock_late_fee:
+    with patch('library_service.get_patron_borrowed_books', return_value=mock_currently_borrowed), \
+         patch('library_service.get_db_connection') as mock_db_conn, \
+         patch('library_service.calculate_late_fee_for_book') as mock_late_fee:
         
         mock_late_fee.return_value = {'fee_amount': 2.50}
         
@@ -122,7 +122,7 @@ def test_get_patron_status_report_with_late_fees():
 
 def test_get_patron_status_report_database_error():
     """Testing Database Error Handling"""
-    with patch('services.library_service.get_patron_borrowed_books', side_effect=Exception("Database connection failed")):
+    with patch('library_service.get_patron_borrowed_books', side_effect=Exception("Database connection failed")):
         result = get_patron_status_report("123456")
         
         assert 'error' in result
